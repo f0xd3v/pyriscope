@@ -69,7 +69,7 @@ options:
 
     -n, --name <file>       Name the file (for single URL input only).
     
-    -p, --proxy             Set proxy (ip:port)
+    -p, --proxy <ip:port>   Set http/https proxy
     
     -t <duration>           The duration (defined by ffmpeg) to record live streams.
   
