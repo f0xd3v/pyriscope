@@ -468,7 +468,7 @@ def process(args):
             stdout("Downloading chunk list.")
             response = requests.get(base_url, headers=req_headers)
             chunks = response.text
-            chunk_pattern = re.compile(r'chunk_\d+\.ts')
+            chunk_pattern = re.compile(r'chunk_\d*\_?\d+\.ts')
             print("\n")
             print(response.status_code)
             print("\n")
