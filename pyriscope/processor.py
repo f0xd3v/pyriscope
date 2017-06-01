@@ -39,7 +39,7 @@ DEFAULT_DL_THREADS = 6
 FFMPEG_NOROT = "ffmpeg -y -v error -i \"{0}.ts\" -bsf:a aac_adtstoasc -codec copy \"{0}.mp4\""
 FFMPEG_ROT ="ffmpeg -y -v error -i \"{0}.ts\" -bsf:a aac_adtstoasc -acodec copy -vf \"transpose=2\" -crf 30 \"{0}.mp4\""
 FFMPEG_LIVE = "ffmpeg -y -v error -headers \"Referer:{}; User-Agent:{}\" -i \"{}\" -c copy{} \"{}.ts\""
-URL_PATTERN = re.compile(r'(http://|https://|)(www.|)(periscope.tv|perisearch.net)/(w|\S+)/(\S+)')
+URL_PATTERN = re.compile(r'(http://|https://|)(www.|)(pscp.tv|periscope.tv|perisearch.net)/(w|\S+)/(\S+)')
 REPLAY_URL = "https://{}/{}/{}"
 REPLAY_PATTERN = re.compile(r'https://(\S*).periscope.tv/(\S*)/(\S*)')
 
@@ -363,7 +363,12 @@ def process(args):
             name = "{} ({})".format(broadcast_public['broadcast']['username'], broadcast_start_time)
 
         name = sanitize(name)
+
+        # Change name if broadcast is live
+        if broadcast_public['broadcast']['state'] == 'RUNNING':
+            name = "{}.live".format(name)
         
+        # Check if filename exists and append/increment number if so.
         tempfilename = os.getcwd() + "\\" + name + ".ts"
         if os.path.isfile(tempfilename):
             i = 0
@@ -381,8 +386,6 @@ def process(args):
                 continue
 
             # The stream is live, start live capture.
-            name = "{}.live".format(name)
-
             if url_parts['token'] == "":
                 req_url = PERISCOPE_GETACCESS.format("broadcast_id", url_parts['broadcast_id'])
             else:
